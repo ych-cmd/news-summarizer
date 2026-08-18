@@ -1,0 +1,34 @@
+name: Daily News Summarization
+
+# 7:00 JST → 22:00 UTC (前日の22:00) で毎日実行
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch:   # 手動でも起動できるようにする
+
+jobs:
+  run-bot:
+    runs-on: windows-latest   # Windows 環境で実行
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create virtual environment & install deps
+        run: |
+          python -m venv venv
+          .\venv\Scripts\activate
+          pip install -r requirements.txt
+
+      - name: Run bot
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
+          LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
+        run: |
+          .\venv\Scripts\activate
+          python -m src.main
