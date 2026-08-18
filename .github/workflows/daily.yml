@@ -19,16 +19,17 @@ jobs:
           python-version: "3.12"
 
       - name: Create virtual environment & install deps
+        shell: cmd
         run: |
           python -m venv venv
-          .\venv\Scripts\activate
-          pip install -r requirements.txt
+          venv\Scripts\python -m pip install --upgrade pip
+          venv\Scripts\python -m pip install -r requirements.txt
 
       - name: Run bot
+        shell: cmd
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           LINE_CHANNEL_ACCESS_TOKEN: ${{ secrets.LINE_CHANNEL_ACCESS_TOKEN }}
           LINE_USER_ID: ${{ secrets.LINE_USER_ID }}
         run: |
-          .\venv\Scripts\activate
-          python -m src.main
+          .\venv\Scripts\python -m src.main
